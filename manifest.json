@@ -1,11 +1,11 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
-	"version": "1.0.0",
+	"id": "daily-note-bar",
+	"name": "Daily Note Bar",
+	"version": "0.1.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "Adds a bar at the top of daily notes to quickly move between them",
+	"author": "Karsten F. Pedersen",
+	"authorUrl": "https://github.com/karstenpedersen",
+	"fundingUrl": "",
 	"isDesktopOnly": false
 }
