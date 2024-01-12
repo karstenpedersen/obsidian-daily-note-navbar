@@ -1,6 +1,6 @@
 import { moment, Plugin, FileView, Notice } from 'obsidian';
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from 'obsidian-daily-notes-interface';
-import { createDailyNoteNavbar } from './daily-note-bar';
+import { createDailyNoteNavbar } from './daily-note-navbar';
 import { DailyNoteNavbarSettings, DEFAULT_SETTINGS, DailyNoteNavbarSettingTab } from './settings';
 import { getDateFromFileName, getDatesInWeekByDate, hideChildren, showChildren } from './utils';
 
@@ -14,21 +14,18 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
-
 		this.addSettingTab(new DailyNoteNavbarSettingTab(this.app, this));
 
-		this.app.workspace.onLayoutReady(() => {
+		this.registerEvent(this.app.workspace.on("active-leaf-change", () => {
 			this.addDailyNoteNavbar();
-		});
-		this.app.workspace.on("active-leaf-change", () => {
-			this.addDailyNoteNavbar();
-		});
+		}));
 	}
 
 	async addDailyNoteNavbar() {
 		// Check if daily notes are setup
 		if (!appHasDailyNotesPluginLoaded) {
-			new Notice("Daily Note Navbar: Please enable daily notes from Periodic Notes plugin");
+			new Notice("Daily Note Navbar: Periodic Notes daily notes plugin not loaded");
+			return;
 		} 
 
 		// Get markdown workspaces

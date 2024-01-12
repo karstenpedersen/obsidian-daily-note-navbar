@@ -26,10 +26,12 @@ export function createDailyNoteNavbar(parentEl: HTMLElement, {
 	handleClickNext,
 	handleClickDate
 }: DailyNoteNavbarProps) {
+	// Create container div
 	const containerEl = createDiv();
 	containerEl.addClass("daily-note-navbar");
 	parentEl.appendChild(containerEl);
 
+	// Create buttons
 	new ButtonComponent(containerEl)
 		.setClass("daily-note-navbar__change-week")
 		.setIcon("left-arrow")
