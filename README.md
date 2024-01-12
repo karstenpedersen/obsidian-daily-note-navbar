@@ -8,7 +8,7 @@ Adds a bar at the top of daily notes to quickly navigate between them.
 
 ## Getting Started
 
-This plugin depends on [Periodic Notes](https://github.com/liamcain/obsidian-periodic-notes), so you should install it.
+This plugin replaces the view header in daily notes files with a navbar. The normal view header is still displayed for other files, and you can still rename daily note files both in the tab bar and in the file explorer.
 
 ### Settings Tab
 
