@@ -3,13 +3,13 @@
 	--color-daily-notes-bar-not-exists: var(--color-base-50);
 }
 
-.daily-note-bar {
+.daily-note-navbar {
 	display: flex;
 	align-items: center;
 	gap: 2px;
 }
 
-.daily-note-bar button {
+.daily-note-navbar button {
 	padding: 0;
 	background: transparent;
 	border: 0;
@@ -18,32 +18,33 @@
 	padding-block: 0;
 }
 
-.daily-note-bar button:hover {
+.daily-note-navbar button:hover {
 	background: var(--interactive-hover);
 }
 
-.daily-note-bar button:disabled {
+.daily-note-navbar button:disabled {
 	background: transparent;
 }
-.daily-note-bar__date {
+.daily-note-navbar__date {
 	min-width: 65px;
 }
 
-.daily-note-bar__change-week {
+.daily-note-navbar__change-week {
 	aspect-ratio: 1 / 1;
 }
 
-.daily-note-bar__current {
+.daily-note-navbar__current {
 	color: var(--color-accent);
 }
 
-.daily-note-bar__not-exists {
+.daily-note-navbar__not-exists {
 	color: var(--color-base-50);
 }
-.daily-note-bar__not-exists:hover {
+.daily-note-navbar__not-exists:hover {
 	color: inherit;
 }
 
-.daily-note-bar__hidden {
+.daily-note-navbar__hidden {
 	display: none;
 }
+

@@ -1,7 +1,7 @@
 import { ButtonComponent } from "obsidian";
 import { getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 
-interface DailyNoteBarProps {
+interface DailyNoteNavbarProps {
 	currentDate: moment.Moment;
 	dates: moment.Moment[];
 	dateFormat: string;
@@ -11,7 +11,7 @@ interface DailyNoteBarProps {
 	handleClickDate: (event: MouseEvent, date: moment.Moment) => Promise<void>;
 }
 
-export function createDailyNoteBar(parentEl: HTMLElement, {
+export function createDailyNoteNavbar(parentEl: HTMLElement, {
 	currentDate,
 	dates,
 	dateFormat,
@@ -19,13 +19,13 @@ export function createDailyNoteBar(parentEl: HTMLElement, {
 	handleClickPrevious,
 	handleClickNext,
 	handleClickDate
-}: DailyNoteBarProps) {
+}: DailyNoteNavbarProps) {
 	const containerEl = createDiv();
-	containerEl.addClass("daily-note-bar");
+	containerEl.addClass("daily-note-navbar");
 	parentEl.appendChild(containerEl);
 
 	new ButtonComponent(containerEl)
-		.setClass("daily-note-bar__change-week")
+		.setClass("daily-note-navbar__change-week")
 		.setIcon("left-arrow")
 		.setTooltip("Previous week")
 		.onClick(handleClickPrevious);
@@ -33,10 +33,10 @@ export function createDailyNoteBar(parentEl: HTMLElement, {
 	for (const date of dates) {
 		const isCurrent = currentDate.format("YYYY-MM-DD") === date.format("YYYY-MM-DD"); 
 		const exists = getDailyNote(date, getAllDailyNotes());
-		const stateClass = isCurrent ? "daily-note-bar__current" : exists ? "daily-note-bar__default" : "daily-note-bar__not-exists"; 
+		const stateClass = isCurrent ? "daily-note-navbar__current" : exists ? "daily-note-navbar__default" : "daily-note-navbar__not-exists"; 
 
 		new ButtonComponent(containerEl)
-			.setClass("daily-note-bar__date")
+			.setClass("daily-note-navbar__date")
 			.setClass(stateClass)
 			.setDisabled(isCurrent)
 			.setButtonText(`${date.format(dateFormat)} ${date.date()}`)
@@ -47,8 +47,9 @@ export function createDailyNoteBar(parentEl: HTMLElement, {
 	}
 
 	new ButtonComponent(containerEl)
-		.setClass("daily-note-bar__change-week")
+		.setClass("daily-note-navbar__change-week")
 		.setIcon("right-arrow")
 		.setTooltip("Next week")
 		.onClick(handleClickNext);
 }
+

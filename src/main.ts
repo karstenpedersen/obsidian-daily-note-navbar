@@ -1,31 +1,34 @@
-import { moment, Plugin, FileView } from 'obsidian';
-import { createDailyNote, getAllDailyNotes, getDailyNote } from 'obsidian-daily-notes-interface';
-import { createDailyNoteBar } from './daily-note-bar';
-import { DailyNoteBarSettings, DEFAULT_SETTINGS, SampleSettingTab } from './settings';
+import { moment, Plugin, FileView, Notice } from 'obsidian';
+import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from 'obsidian-daily-notes-interface';
+import { createDailyNoteNavbar } from './daily-note-bar';
+import { DailyNoteNavbarSettings, DEFAULT_SETTINGS, DailyNoteNavbarSettingTab } from './settings';
 import { getDateFromFileName, getDatesInWeekByDate, hideChildren, showChildren } from './utils';
 
-export default class DailyNoteBarPlugin extends Plugin {
-	instance: DailyNoteBarPlugin;
-	settings: DailyNoteBarSettings;
+export default class DailyNoteNavbarPlugin extends Plugin {
+	settings: DailyNoteNavbarSettings;
 	currentDate = moment();
 	weekOffset = 0;
 
 	async onload() {
-		this.instance = this;
-
 		await this.loadSettings();
 
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addSettingTab(new DailyNoteNavbarSettingTab(this.app, this));
 
 		this.app.workspace.onLayoutReady(() => {
-			this.addDailyNoteBar();
+			this.addDailyNoteNavbar();
 		});
 		this.app.workspace.on("active-leaf-change", () => {
-			this.addDailyNoteBar();
+			this.addDailyNoteNavbar();
 		});
 	}
 
-	async addDailyNoteBar() {
+	async addDailyNoteNavbar() {
+		if (!appHasDailyNotesPluginLoaded) {
+			new Notice("Daily Note Navbar: Please enable daily notes from Periodic Notes plugin");
+		} else if (!appHasDailyNotesPluginLoaded) {
+			new Notice("Daily Note Navbar: Please enable daily notes from Periodic Notes plugin");
+		}
+
 		// Get markdown workspaces
 		const workspaces = this.app.workspace.getLeavesOfType("markdown");
 
@@ -44,9 +47,9 @@ export default class DailyNoteBarPlugin extends Plugin {
 				const viewHeaderTitleEl = viewHeaderTitleElements[i] as HTMLElement;
 
 				// Remove old daily note bar
-				const dailyNoteBarElements = view.containerEl.getElementsByClassName("daily-note-bar");
-				for (let k = 0; k < dailyNoteBarElements.length; k++) {
-					dailyNoteBarElements[k].remove();
+				const dailyNoteNavbarElements = view.containerEl.getElementsByClassName("daily-note-navbar");
+				for (let k = 0; k < dailyNoteNavbarElements.length; k++) {
+					dailyNoteNavbarElements[k].remove();
 				}
 
 				// Check if file is a daily note file or a normal file
@@ -64,18 +67,18 @@ export default class DailyNoteBarPlugin extends Plugin {
 				// Hide other title header elements
 				hideChildren(viewHeaderTitleEl);
 				// Create daily note bar
-				createDailyNoteBar(viewHeaderTitleEl, {
+				createDailyNoteNavbar(viewHeaderTitleEl, {
 					currentDate: fileDate,
 					dates,
 					dateFormat: this.settings.dateFormat,
 					tooltipDateFormat: this.settings.tooltipDateFormat,
 					handleClickPrevious: () => {
 						this.weekOffset--;
-						this.addDailyNoteBar();
+						this.addDailyNoteNavbar();
 					},
 					handleClickNext: () => {
 						this.weekOffset++;
-						this.addDailyNoteBar();
+						this.addDailyNoteNavbar();
 					},
 					handleClickDate: async (event: MouseEvent, date: moment.Moment) => {
 						const dailyNote = getDailyNote(date, getAllDailyNotes()) ?? await createDailyNote(date);

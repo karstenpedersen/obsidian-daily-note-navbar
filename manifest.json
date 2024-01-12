@@ -1,11 +1,10 @@
 {
-	"id": "daily-note-bar",
-	"name": "Daily Note Bar",
+	"id": "daily-note-navbar",
+	"name": "Daily Note Navbar",
 	"version": "0.1.0",
 	"minAppVersion": "0.15.0",
-	"description": "Adds a bar at the top of daily notes to quickly move between them",
+	"description": "Adds a daily note navbar to quickly navigate between sequential daily notes",
 	"author": "Karsten F. Pedersen",
 	"authorUrl": "https://github.com/karstenpedersen",
-	"fundingUrl": "",
 	"isDesktopOnly": false
 }

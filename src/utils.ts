@@ -20,12 +20,12 @@ export function getDateFromFileName(filename: string): moment.Moment {
 
 export function hideChildren(el: HTMLElement) {
 	for (let k = 0; k < el.children.length; k++) {
-		el.children[k].addClass("daily-note-bar__hidden");
+		el.children[k].addClass("daily-note-navbar__hidden");
 	}
 }
 
 export function showChildren(el: HTMLElement) {
 	for (let k = 0; k < el.children.length; k++) {
-		el.children[k].removeClass("daily-note-bar__hidden");
+		el.children[k].removeClass("daily-note-navbar__hidden");
 	}
 }

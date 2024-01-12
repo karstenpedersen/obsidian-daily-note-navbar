@@ -1,7 +1,7 @@
 {
-	"name": "daily-note-bar",
-	"version": "0.0.1",
-	"description": "Adds a bar at the top of daily notes to quickly change between them",
+	"name": "daily-note-navbar",
+	"version": "0.1.0",
+	"description": "Adds a daily note navbar to quickly navigate between sequential daily notes",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",

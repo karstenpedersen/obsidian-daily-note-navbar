@@ -1,17 +1,17 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import DailyNoteBarPlugin from "./main";
 
-export interface DailyNoteBarSettings {
+export interface DailyNoteNavbarSettings {
 	dateFormat: string;
 	tooltipDateFormat: string;
 }
 
-export const DEFAULT_SETTINGS: DailyNoteBarSettings = {
+export const DEFAULT_SETTINGS: DailyNoteNavbarSettings = {
 	dateFormat: "ddd",
 	tooltipDateFormat: "YYYY-MM-DD",
 }
 
-export class SampleSettingTab extends PluginSettingTab {
+export class DailyNoteNavbarSettingTab extends PluginSettingTab {
 	plugin: DailyNoteBarPlugin;
 
 	constructor(app: App, plugin: DailyNoteBarPlugin) {
