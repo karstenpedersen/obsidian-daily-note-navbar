@@ -1,4 +1,4 @@
-# Daily Note Bar 
+# Daily Note Navbar 
 
 Adds a bar at the top of daily notes to quickly navigate between them.
 
