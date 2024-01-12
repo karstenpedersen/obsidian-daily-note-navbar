@@ -33,4 +33,4 @@ With the settings tab you can customize what formats the dates are in.
 
 ## Contact
 
--   Get in contact on the plugins GitHub.
+-   Get in contact on the plugins [GitHub page](https://github.com/karstenpedersen/obsidian-daily-note-bar).
