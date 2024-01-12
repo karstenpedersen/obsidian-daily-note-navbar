@@ -1,8 +1,45 @@
-/*
+:root {
+	--color-daily-notes-bar-current: var(--color-accent);
+	--color-daily-notes-bar-not-exists: var(--color-base-50);
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.daily-note-bar {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+}
 
-If your plugin does not need CSS, delete this file.
+.daily-note-bar button {
+	padding: 0;
+	background: transparent;
+	border: 0;
+	box-shadow: none;
+	padding-inline: 4px;
+	padding-block: 0;
+}
 
-*/
+.daily-note-bar button:hover {
+	background: var(--interactive-hover);
+}
+
+.daily-note-bar button:disabled {
+	background: transparent;
+}
+.daily-note-bar__date {
+	min-width: 65px;
+}
+
+.daily-note-bar__change-week {
+	aspect-ratio: 1 / 1;
+}
+
+.daily-note-bar__current {
+	color: var(--color-accent);
+}
+
+.daily-note-bar__not-exists {
+	color: var(--color-base-50);
+}
+.daily-note-bar__not-exists:hover {
+	color: inherit;
+}
