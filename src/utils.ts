@@ -1,5 +1,11 @@
 import { moment } from "obsidian";
 
+/**
+ * Gets the dates in the entire week that the date is in.
+ *
+ * @param {moment.Moment} date - The date to get dates for.
+ * @returns {moment.Moment[]} Returns the dates in the week.
+ */
 export function getDatesInWeekByDate(date: moment.Moment): moment.Moment[] {
 	const daysInWeek = [];
 	const startOfWeek = date.clone().startOf('week');
@@ -14,16 +20,32 @@ export function getDatesInWeekByDate(date: moment.Moment): moment.Moment[] {
 	return daysInWeek;
 }
 
+/**
+ * Gets date based on given filename.
+ *
+ * @param {string} filename - The filename to get date from.
+ * @returns {moment.Moment} Returns the date or null if there is no date.
+ */
 export function getDateFromFileName(filename: string): moment.Moment {
 	return this.currentDate = moment(filename.split(".")[0]);
 }
 
+/**
+ * Hides all children in element.
+ *
+ * @param {HTMLElement} el - The parent element which children to hide.
+ */
 export function hideChildren(el: HTMLElement) {
 	for (let k = 0; k < el.children.length; k++) {
 		el.children[k].addClass("daily-note-navbar__hidden");
 	}
 }
 
+/**
+ * Shows all children in element.
+ *
+ * @param {HTMLElement} el - The parent element which children to show.
+ */
 export function showChildren(el: HTMLElement) {
 	for (let k = 0; k < el.children.length; k++) {
 		el.children[k].removeClass("daily-note-navbar__hidden");

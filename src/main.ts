@@ -4,6 +4,9 @@ import { createDailyNoteNavbar } from './daily-note-bar';
 import { DailyNoteNavbarSettings, DEFAULT_SETTINGS, DailyNoteNavbarSettingTab } from './settings';
 import { getDateFromFileName, getDatesInWeekByDate, hideChildren, showChildren } from './utils';
 
+/**
+ * This class is the actual Obsidian plugin.
+ */
 export default class DailyNoteNavbarPlugin extends Plugin {
 	settings: DailyNoteNavbarSettings;
 	currentDate = moment();

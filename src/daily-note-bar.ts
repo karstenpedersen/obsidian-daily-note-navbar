@@ -11,6 +11,12 @@ interface DailyNoteNavbarProps {
 	handleClickDate: (event: MouseEvent, date: moment.Moment) => Promise<void>;
 }
 
+/**
+ * Creates a daily note navbar and adds it to parentEl.
+ *
+ * @param {HTMLElement} parentEl - The element to place the navbar in.
+ * @param {DailyNoteNavbarProps} props - The navbars props.
+ */
 export function createDailyNoteNavbar(parentEl: HTMLElement, {
 	currentDate,
 	dates,

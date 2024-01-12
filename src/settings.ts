@@ -6,11 +6,17 @@ export interface DailyNoteNavbarSettings {
 	tooltipDateFormat: string;
 }
 
+/**
+ * The plugins default settings.
+ */
 export const DEFAULT_SETTINGS: DailyNoteNavbarSettings = {
 	dateFormat: "ddd",
 	tooltipDateFormat: "YYYY-MM-DD",
 }
 
+/**
+ * This class is the plugins settings tab.
+ */
 export class DailyNoteNavbarSettingTab extends PluginSettingTab {
 	plugin: DailyNoteBarPlugin;
 
@@ -19,11 +25,11 @@ export class DailyNoteNavbarSettingTab extends PluginSettingTab {
 		this.plugin = plugin;
 	}
 
-	display(): void {
-		const {containerEl} = this;
-
+	display() {
+		const { containerEl } = this;
 		containerEl.empty();
 
+		// Date format
 		new Setting(containerEl)
 			.setName('Date format')
 			.setDesc('Date format for the daily note bar.')
@@ -38,6 +44,7 @@ export class DailyNoteNavbarSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
+		// Tooltip date format
 		new Setting(containerEl)
 			.setName('Tooltip date format')
 			.setDesc('Date format for tooltips.')
