@@ -43,3 +43,7 @@
 .daily-note-bar__not-exists:hover {
 	color: inherit;
 }
+
+.daily-note-bar__hidden {
+	display: none;
+}

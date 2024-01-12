@@ -17,3 +17,15 @@ export function getDatesInWeekByDate(date: moment.Moment): moment.Moment[] {
 export function getDateFromFileName(filename: string): moment.Moment {
 	return this.currentDate = moment(filename.split(".")[0]);
 }
+
+export function hideChildren(el: HTMLElement) {
+	for (let k = 0; k < el.children.length; k++) {
+		el.children[k].addClass("daily-note-bar__hidden");
+	}
+}
+
+export function showChildren(el: HTMLElement) {
+	for (let k = 0; k < el.children.length; k++) {
+		el.children[k].removeClass("daily-note-bar__hidden");
+	}
+}
