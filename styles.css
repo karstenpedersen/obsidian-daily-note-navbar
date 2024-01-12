@@ -12,22 +12,24 @@
 	padding-inline: 4px;
 	padding-block: 0;
 }
-
 .daily-note-navbar button:hover {
 	background: var(--interactive-hover);
 }
-
 .daily-note-navbar button:disabled {
 	background: transparent;
 }
+
 .daily-note-navbar__date {
 	min-width: 65px;
 }
 
 .daily-note-navbar__change-week {
 	aspect-ratio: 1 / 1;
-	color: var(--icon-color-hover);
-	opacity: var(--icon-opacity);
+}
+.daily-note-navbar__change-week svg {
+	height: 16px;
+	aspect-ratio: 1 / 1;
+    stroke-width: var(--icon-stroke);
 }
 
 .daily-note-navbar__current {
