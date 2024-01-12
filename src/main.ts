@@ -26,11 +26,10 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 	}
 
 	async addDailyNoteNavbar() {
+		// Check if daily notes are setup
 		if (!appHasDailyNotesPluginLoaded) {
 			new Notice("Daily Note Navbar: Please enable daily notes from Periodic Notes plugin");
-		} else if (!appHasDailyNotesPluginLoaded) {
-			new Notice("Daily Note Navbar: Please enable daily notes from Periodic Notes plugin");
-		}
+		} 
 
 		// Get markdown workspaces
 		const workspaces = this.app.workspace.getLeavesOfType("markdown");
