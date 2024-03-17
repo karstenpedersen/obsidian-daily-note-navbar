@@ -52,7 +52,7 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 				}
 
 				// Check if file is a daily note file or a normal file
-				const fileDate = getDateFromFileName(activeFile.name);
+				const fileDate = getDateFromFileName(activeFile.name, this.settings.dailyNoteDateFormat);
 				const isDailyNoteFile = fileDate.isValid(); 
 
 				if (!isDailyNoteFile) {

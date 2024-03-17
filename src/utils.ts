@@ -24,10 +24,11 @@ export function getDatesInWeekByDate(date: moment.Moment): moment.Moment[] {
  * Gets date based on given filename.
  *
  * @param {string} filename - The filename to get date from.
+ * @param {string} dateFormat - The date format of the filename.
  * @returns {moment.Moment} Returns the date or null if there is no date.
  */
-export function getDateFromFileName(filename: string): moment.Moment {
-	return this.currentDate = moment(filename.split(".")[0]);
+export function getDateFromFileName(filename: string, dateFormat: string): moment.Moment {
+	return this.currentDate = moment(filename.split(".")[0], dateFormat);
 }
 
 /**

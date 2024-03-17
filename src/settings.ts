@@ -4,6 +4,7 @@ import DailyNoteBarPlugin from "./main";
 export interface DailyNoteNavbarSettings {
 	dateFormat: string;
 	tooltipDateFormat: string;
+	dailyNoteDateFormat: string;
 }
 
 /**
@@ -12,6 +13,7 @@ export interface DailyNoteNavbarSettings {
 export const DEFAULT_SETTINGS: DailyNoteNavbarSettings = {
 	dateFormat: "ddd",
 	tooltipDateFormat: "YYYY-MM-DD",
+	dailyNoteDateFormat: "YYYY-MM-DD",
 }
 
 /**
@@ -28,6 +30,21 @@ export class DailyNoteNavbarSettingTab extends PluginSettingTab {
 	display() {
 		const { containerEl } = this;
 		containerEl.empty();
+
+		// Daily note name format
+		new Setting(containerEl)
+			.setName('Daily note date format')
+			.setDesc('Date format for daily notes.')
+			.addText(text => text
+				.setPlaceholder(DEFAULT_SETTINGS.dailyNoteDateFormat)
+				.setValue(this.plugin.settings.dailyNoteDateFormat)
+				.onChange(async (value) => {
+					if (value.trim() === "") {
+						value = DEFAULT_SETTINGS.dailyNoteDateFormat;
+					}
+					this.plugin.settings.dailyNoteDateFormat = value;
+					await this.plugin.saveSettings();
+				}));
 
 		// Date format
 		new Setting(containerEl)
