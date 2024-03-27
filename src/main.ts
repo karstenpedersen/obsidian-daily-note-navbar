@@ -1,4 +1,4 @@
-import { moment, Plugin, FileView, Notice } from 'obsidian';
+import { moment, Plugin, Notice, MarkdownView } from 'obsidian';
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from 'obsidian-daily-notes-interface';
 import { createDailyNoteNavbar } from './daily-note-navbar';
 import { DailyNoteNavbarSettings, DEFAULT_SETTINGS, DailyNoteNavbarSettingTab } from './settings';
@@ -28,21 +28,21 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 			return;
 		} 
 
-		// Get markdown workspaces
-		const workspaces = this.app.workspace.getLeavesOfType("markdown");
+		// Get markdown leaves
+		const leaves = this.app.workspace.getLeavesOfType("markdown");
 
-		for (const workspace of workspaces) {
+		for (const leaf of leaves) {
 			// Get view header title container
-			const view = workspace.view;
+			const view = leaf.view as MarkdownView;
+			// Check if view has an active file
+			const activeFile = view.file;
+			if (!activeFile) {
+				continue;
+			}
+
 			const viewHeaderTitleElements = view.containerEl.getElementsByClassName("view-header-title-container");
 
 			for (let i = 0; i < viewHeaderTitleElements.length; i++) {
-				// Check if view has an active file
-				const activeFile = (view as FileView).file;
-				if (!activeFile) {
-					continue;
-				}
-
 				const viewHeaderTitleEl = viewHeaderTitleElements[i] as HTMLElement;
 
 				// Remove old daily note bar
