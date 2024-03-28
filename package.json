@@ -1,6 +1,6 @@
 {
 	"name": "daily-note-navbar",
-	"version": "0.1.0",
+	"version": "0.1.2",
 	"description": "Adds a daily note navbar to quickly navigate between sequential daily notes",
 	"main": "main.js",
 	"scripts": {
