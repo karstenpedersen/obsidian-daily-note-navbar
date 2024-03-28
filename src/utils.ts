@@ -11,7 +11,7 @@ export function getDatesInWeekByDate(date: moment.Moment): moment.Moment[] {
 	const startOfWeek = date.clone().startOf('week');
 	const endOfWeek = startOfWeek.clone().endOf('week');
 
-	let currentDay = startOfWeek;
+	const currentDay = startOfWeek;
 	while (currentDay.isSameOrBefore(endOfWeek, 'day')) {
 		daysInWeek.push(currentDay.clone());
 		currentDay.add(1, 'day');
