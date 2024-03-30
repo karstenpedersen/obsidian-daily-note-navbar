@@ -34,6 +34,10 @@ I saw a navbar at the top of daily notes in RemNote and thought it was neat.
 
 ## Version History
 
+### 0.1.2
+
+- Don't show navbar in non-daily notes.
+
 ### 0.1.1
 
 - Add date format for filenames.
