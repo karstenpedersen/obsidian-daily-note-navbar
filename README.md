@@ -32,6 +32,15 @@ I saw a navbar at the top of daily notes in RemNote and thought it was neat.
 6.  Click "Install" and enable the plugin.
 7.  Close the community plugins window.
 
+## Styling
+
+- `daily-note-navbar`: The actual bar.
+- `daily-note-navbar__default`: The default daily note elements.
+- `daily-note-navbar__active`: The currently active daily note.
+- `daily-note-navbar__not-exists`: The daily note elements that don't exists.
+- `daily-note-navbar__current`: The daily note element for the current date.
+- `daily-note-navbar__change-week`: The left and right buttons for changing weeks.
+
 ## Version History
 
 ### 0.1.3
