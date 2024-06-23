@@ -1,8 +1,8 @@
-import { ButtonComponent } from "obsidian";
+import { ButtonComponent, moment } from "obsidian";
 import { getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 
 interface DailyNoteNavbarProps {
-	currentDate: moment.Moment;
+	activeDate: moment.Moment;
 	dates: moment.Moment[];
 	dateFormat: string;
 	tooltipDateFormat: string;
@@ -18,7 +18,7 @@ interface DailyNoteNavbarProps {
  * @param {DailyNoteNavbarProps} props - The navbars props.
  */
 export function createDailyNoteNavbar(parentEl: HTMLElement, {
-	currentDate,
+	activeDate,
 	dates,
 	dateFormat,
 	tooltipDateFormat,
@@ -31,6 +31,8 @@ export function createDailyNoteNavbar(parentEl: HTMLElement, {
 	containerEl.addClass("daily-note-navbar");
 	parentEl.appendChild(containerEl);
 
+	const currentDate: moment.Moment = moment();
+
 	// Create buttons
 	new ButtonComponent(containerEl)
 		.setClass("daily-note-navbar__change-week")
@@ -39,19 +41,25 @@ export function createDailyNoteNavbar(parentEl: HTMLElement, {
 		.onClick(handleClickPrevious);
 
 	for (const date of dates) {
-		const isCurrent = currentDate.format("YYYY-MM-DD") === date.format("YYYY-MM-DD"); 
+		const dateString = date.format("YYYY-MM-DD");
+		const isActive = activeDate.format("YYYY-MM-DD") === dateString;
+		const isCurrent = currentDate.format("YYYY-MM-DD") === dateString;
 		const exists = getDailyNote(date, getAllDailyNotes());
-		const stateClass = isCurrent ? "daily-note-navbar__current" : exists ? "daily-note-navbar__default" : "daily-note-navbar__not-exists"; 
+		const stateClass = isActive ? "daily-note-navbar__active" : exists ? "daily-note-navbar__default" : "daily-note-navbar__not-exists"; 
 
-		new ButtonComponent(containerEl)
+		const button = new ButtonComponent(containerEl)
 			.setClass("daily-note-navbar__date")
 			.setClass(stateClass)
-			.setDisabled(isCurrent)
+			.setDisabled(isActive)
 			.setButtonText(`${date.format(dateFormat)} ${date.date()}`)
 			.setTooltip(`${date.format(tooltipDateFormat)}`)
 			.onClick(async (event: MouseEvent) => {
 				handleClickDate(event, date);
 			});
+
+		if (isCurrent) {
+			button.setClass("daily-note-navbar__current");
+		}
 	}
 
 	new ButtonComponent(containerEl)

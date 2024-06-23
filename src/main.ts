@@ -60,14 +60,14 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 					showChildren(viewHeaderTitleEl);
 					continue;
 				}
-				
+
 				// Get visible dates
-				const dates = getDatesInWeekByDate(fileDate.clone().add(this.weekOffset, "week"));
+				const dates = getDatesInWeekByDate(fileDate.clone().add(this.weekOffset, "week"), this.settings.firstDayOfWeek);
 				// Hide other title header elements
 				hideChildren(viewHeaderTitleEl);
 				// Create daily note bar
 				createDailyNoteNavbar(viewHeaderTitleEl, {
-					currentDate: fileDate,
+					activeDate: fileDate,
 					dates,
 					dateFormat: this.settings.dateFormat,
 					tooltipDateFormat: this.settings.tooltipDateFormat,

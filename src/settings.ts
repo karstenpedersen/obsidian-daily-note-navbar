@@ -1,10 +1,13 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
+import { FirstDayOfWeek, FIRST_DAY_OF_WEEK } from "./types";
+import { toRecord } from "./utils";
 import DailyNoteBarPlugin from "./main";
 
 export interface DailyNoteNavbarSettings {
 	dateFormat: string;
 	tooltipDateFormat: string;
 	dailyNoteDateFormat: string;
+	firstDayOfWeek: FirstDayOfWeek;
 }
 
 /**
@@ -14,6 +17,7 @@ export const DEFAULT_SETTINGS: DailyNoteNavbarSettings = {
 	dateFormat: "ddd",
 	tooltipDateFormat: "YYYY-MM-DD",
 	dailyNoteDateFormat: "YYYY-MM-DD",
+	firstDayOfWeek: "Monday",
 }
 
 /**
@@ -44,6 +48,7 @@ export class DailyNoteNavbarSettingTab extends PluginSettingTab {
 					}
 					this.plugin.settings.dailyNoteDateFormat = value;
 					await this.plugin.saveSettings();
+					this.plugin.addDailyNoteNavbar();
 				}));
 
 		// Date format
@@ -59,6 +64,7 @@ export class DailyNoteNavbarSettingTab extends PluginSettingTab {
 					}
 					this.plugin.settings.dateFormat = value;
 					await this.plugin.saveSettings();
+					this.plugin.addDailyNoteNavbar();
 				}));
 
 		// Tooltip date format
@@ -74,6 +80,20 @@ export class DailyNoteNavbarSettingTab extends PluginSettingTab {
 					}
 					this.plugin.settings.tooltipDateFormat = value;
 					await this.plugin.saveSettings();
+					this.plugin.addDailyNoteNavbar();
+				}));
+
+		// First day of week
+		new Setting(containerEl)
+			.setName('First day of week')
+			.setDesc('The first day in the daily note bar.')
+			.addDropdown(dropdown => dropdown
+				.addOptions(toRecord(FIRST_DAY_OF_WEEK.map((item) => item)))
+				.setValue(this.plugin.settings.firstDayOfWeek)
+				.onChange(async (value: "Monday" | "Sunday") => {
+					this.plugin.settings.firstDayOfWeek = value;
+					await this.plugin.saveSettings();
+					this.plugin.addDailyNoteNavbar();
 				}));
 	}
 }
