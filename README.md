@@ -34,6 +34,11 @@ I saw a navbar at the top of daily notes in RemNote and thought it was neat.
 
 ## Version History
 
+### 0.1.3
+
+- Add firstDayOfWeek setting to change between Monday and Sunday.
+- Add CSS class to current date elements to enable custom styling.
+
 ### 0.1.2
 
 - Don't show navbar in non-daily notes.
