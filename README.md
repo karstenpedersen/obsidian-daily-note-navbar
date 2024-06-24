@@ -41,26 +41,6 @@ I saw a navbar at the top of daily notes in RemNote and thought it was neat.
 - `daily-note-navbar__current`: The daily note element for the current date.
 - `daily-note-navbar__change-week`: The left and right buttons for changing weeks.
 
-## Version History
-
-### 0.1.3
-
-- Add firstDayOfWeek setting to change between Monday and Sunday.
-- Add CSS class to current date elements to enable custom styling.
-
-### 0.1.2
-
-- Don't show navbar in non-daily notes.
-
-### 0.1.1
-
-- Add date format for filenames.
-
-### 0.1.0
-
-- Add navigation bar.
-- Integrate [Periodic Notes](https://github.com/liamcain/obsidian-periodic-notes).
-
 ## Contact
 
 -   Get in contact on the plugins [GitHub page](https://github.com/karstenpedersen/obsidian-daily-note-bar).
