@@ -1,5 +1,6 @@
-import { moment } from "obsidian";
+import { moment, TFile } from "obsidian";
 import { FirstDayOfWeek } from "./types";
+import { createDailyNote, getAllDailyNotes, getDailyNote } from 'obsidian-daily-notes-interface';
 
 /**
  * Gets the dates in the entire week that the date is in.
@@ -66,4 +67,15 @@ export function toRecord(arr: string[]): Record<string, string> {
 	const recordObject: Record<string, string> = {};
 	arr.forEach(item => recordObject[item] = item)
 	return recordObject;
+}
+
+/**
+ * Gets the daily note file for the given date.
+ *
+ * @note This creates the daily note if it doesn't aldready exist.
+ * @param {moment.Moment} date - The date to get file for.
+ * @return {TFile} Returns the daily note file.
+ */
+export async function getDailyNoteFile(date: moment.Moment): Promise<TFile> {
+	return getDailyNote(date, getAllDailyNotes()) ?? await createDailyNote(date);
 }

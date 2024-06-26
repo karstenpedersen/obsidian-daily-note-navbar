@@ -1,8 +1,9 @@
-import { moment, Plugin, Notice, MarkdownView } from 'obsidian';
-import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from 'obsidian-daily-notes-interface';
+import { moment, Plugin, TFile, Notice, MarkdownView } from 'obsidian';
+import { appHasDailyNotesPluginLoaded } from 'obsidian-daily-notes-interface';
 import { createDailyNoteNavbar } from './daily-note-navbar';
 import { DailyNoteNavbarSettings, DEFAULT_SETTINGS, DailyNoteNavbarSettingTab } from './settings';
-import { getDateFromFileName, getDatesInWeekByDate, hideChildren, showChildren } from './utils';
+import { FileOpenType } from './types';
+import { getDateFromFileName, getDatesInWeekByDate, getDailyNoteFile, hideChildren, showChildren } from './utils';
 
 /**
  * This class is the actual Obsidian plugin.
@@ -55,7 +56,6 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 				// Check if file is a daily note file or a normal file
 				const fileDate = getDateFromFileName(activeFile.basename, this.settings.dailyNoteDateFormat);
 				const isDailyNoteFile = fileDate.isValid(); 
-
 				if (!isDailyNoteFile) {
 					// Remove display none from title header elements
 					showChildren(viewHeaderTitleEl);
@@ -67,7 +67,7 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 				// Hide other title header elements
 				hideChildren(viewHeaderTitleEl);
 				// Create daily note bar
-				createDailyNoteNavbar(viewHeaderTitleEl, {
+				createDailyNoteNavbar(this, viewHeaderTitleEl, {
 					activeDate: fileDate,
 					dates,
 					dateFormat: this.settings.dateFormat,
@@ -81,14 +81,46 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 						this.addDailyNoteNavbar();
 					},
 					handleClickDate: async (event: MouseEvent, date: moment.Moment) => {
-						const dailyNote = getDailyNote(date, getAllDailyNotes()) ?? await createDailyNote(date);
-						await this.app.workspace.openLinkText(dailyNote.path, "", event.ctrlKey, {
-							active: true,
-						});
-						this.weekOffset = 0;
+						this.openDailyNote(date, event.ctrlKey ? "New tab" : this.settings.defaultOpenType);
 					}
 				});
 			}
+		}
+	}
+
+	async openDailyNote(date: moment.Moment, openType: FileOpenType) {
+		const dailyNote = await getDailyNoteFile(date);
+		this.openFile(dailyNote, openType);
+		this.weekOffset = 0;
+	}
+
+	async openFile(file: TFile, openType: FileOpenType) {
+		switch (openType) {
+			case "New window":
+				await this.app.workspace
+					.getLeaf("window")
+					.openFile(file, { active: this.settings.setActive });
+				return;
+			case "New tab":
+				await this.app.workspace
+					.getLeaf("tab")
+					.openFile(file, { active: this.settings.setActive });
+				return;
+			case "Split right":
+				await this.app.workspace
+					.getLeaf("split", "vertical")
+					.openFile(file, { active: this.settings.setActive });
+				return;
+			case "Split down":
+				await this.app.workspace
+					.getLeaf("split", "horizontal")
+					.openFile(file, { active: this.settings.setActive });
+				return;
+			case "Active":
+				await this.app.workspace
+					.getLeaf()
+					.openFile(file, { active: true });
+				break;
 		}
 	}
 
