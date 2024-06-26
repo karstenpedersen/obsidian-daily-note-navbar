@@ -22,11 +22,11 @@ const FILE_OPEN_TYPES_MAPPING: FileOpenTypeMapping = {
 	},
 	"Split right": {
 		icon: "separator-vertical",
-		title: "Open to the right"
+		title: "Split right"
 	},
 	"Split down": {
 		icon: "separator-vertical",
-		title: "Open below"
+		title: "Split down"
 	},
 	"New window": {
 		icon: "picture-in-picture-2",

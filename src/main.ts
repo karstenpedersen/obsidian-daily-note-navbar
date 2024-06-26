@@ -119,7 +119,7 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 			case "Active":
 				await this.app.workspace
 					.getLeaf()
-					.openFile(file, { active: this.settings.setActive });
+					.openFile(file, { active: true });
 				break;
 		}
 	}
