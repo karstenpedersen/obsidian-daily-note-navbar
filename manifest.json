@@ -1,7 +1,7 @@
 {
 	"id": "daily-note-navbar",
 	"name": "Daily Note Navbar",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"minAppVersion": "0.15.0",
 	"description": "Navigate between sequential daily notes with ease.",
 	"author": "Karsten F. Pedersen",
