@@ -17,6 +17,7 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 		this.addSettingTab(new DailyNoteNavbarSettingTab(this.app, this));
 
 		this.registerEvent(this.app.workspace.on("active-leaf-change", () => {
+			this.weekOffset = 0;
 			this.addDailyNoteNavbar();
 		}));
 	}
