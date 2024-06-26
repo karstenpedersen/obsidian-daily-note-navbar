@@ -72,6 +72,7 @@ export function toRecord(arr: string[]): Record<string, string> {
 /**
  * Gets the daily note file for the given date.
  *
+ * @note This creates the daily note if it doesn't aldready exist.
  * @param {moment.Moment} date - The date to get file for.
  * @return {TFile} Returns the daily note file.
  */
