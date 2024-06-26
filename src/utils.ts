@@ -1,4 +1,4 @@
-import { moment, TFile } from "obsidian";
+import { View, moment, TFile } from "obsidian";
 import { FirstDayOfWeek } from "./types";
 import { createDailyNote, getAllDailyNotes, getDailyNote } from 'obsidian-daily-notes-interface';
 

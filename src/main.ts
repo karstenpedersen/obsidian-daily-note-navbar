@@ -1,4 +1,4 @@
-import { Plugin, TFile, Notice, MarkdownView } from 'obsidian';
+import { Plugin, TFile, Notice, MarkdownView, WorkspaceLeaf } from 'obsidian';
 import { DailyNoteNavbarSettings, DEFAULT_SETTINGS, DailyNoteNavbarSettingTab } from './settings';
 import { FileOpenType } from './types';
 import { getDateFromFileName, getDailyNoteFile, hideChildren, showChildren } from './utils';
@@ -15,69 +15,75 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 		this.addSettingTab(new DailyNoteNavbarSettingTab(this.app, this));
-		this.registerEvent(this.app.workspace.on("active-leaf-change", () => this.addDailyNoteNavbar()));
+		this.registerEvent(this.app.workspace.on("active-leaf-change", (leaf: WorkspaceLeaf) => {
+			this.addDailyNoteNavbar(leaf);
+		}));
+		this.registerEvent(this.app.workspace.on("css-change", () => this.rerenderNavbars()));
 	}
 
-	async addDailyNoteNavbar() {
+	async addDailyNoteNavbar(leaf: WorkspaceLeaf) {
 		if (!this.hasDependencies()) {
 			return;
 		}
 
-		// Get markdown leaves
-		const leaves = this.app.workspace.getLeavesOfType("markdown");
-		for (const leaf of leaves) {
-			// Get view header title container
-			const view = leaf.view as MarkdownView;
-			// Check if view has an active file
-			const activeFile = view.file;
-			if (!activeFile) {
-				continue;
-			}
+		// Check for markdown view and file
+		const markdownLeaves = this.app.workspace.getLeavesOfType("markdown");
+		if (!markdownLeaves.includes(leaf)) {
+			return;
+		}
+		const view = leaf.view as MarkdownView;
+		const activeFile = view.file;
+		if (!activeFile) {
+			return;
+		}
 
-			// Get view header title container
-			const viewHeaderTitleContainers = view.containerEl.getElementsByClassName("view-header-title-container");
-			if (viewHeaderTitleContainers.length !== 1) {
-				continue;
-			}
-			const titleContainerEl = viewHeaderTitleContainers[0] as HTMLElement;
+		// Get view header title container
+		const viewHeaderTitleContainers = view.containerEl.getElementsByClassName("view-header-title-container");
+		if (viewHeaderTitleContainers.length !== 1) {
+			return;
+		}
+		const titleContainerEl = viewHeaderTitleContainers[0] as HTMLElement;
 
-			// Check for navbar
-			let navbar: DailyNoteNavbar | undefined;
-			const navbars = view.containerEl.getElementsByClassName("daily-note-navbar");
-			if (navbars.length > 0) {
-				const navbarEl = navbars[0];
-				const navbarId = navbarEl.getAttribute("id");
-				if (navbarId) {
-					navbar = this.getNavbar(navbarId);
-				}
+		// Check for navbar
+		let navbar: DailyNoteNavbar | undefined;
+		const navbars = view.containerEl.getElementsByClassName("daily-note-navbar");
+		if (navbars.length > 0) {
+			const navbarEl = navbars[0];
+			const navbarId = navbarEl.getAttribute("daily-note-navbar-id");
+			if (navbarId) {
+				navbar = this.getNavbar(navbarId);
 			}
+		}
 
-			// Check if file is a daily note file or a normal file
-			const fileDate = getDateFromFileName(activeFile.basename, this.settings.dailyNoteDateFormat);
-			if (!fileDate.isValid()) {
+		// Check if file is a daily note file or a normal file
+		const fileDate = getDateFromFileName(activeFile.basename, this.settings.dailyNoteDateFormat);
+		if (!fileDate.isValid()) {
+			if (navbar) {
+				this.removeNavbar(navbar.id);
+				showChildren(titleContainerEl);
+			}
+			return;
+		}
+		
+		if (navbar) {
+			// Reuse navbar for new file
+			navbar.rerender(fileDate);
+		} else {
+			hideChildren(titleContainerEl);
+			navbar = this.createNavbar(titleContainerEl, fileDate);
+			view.onunload = () => {
 				if (navbar) {
 					this.removeNavbar(navbar.id);
 				}
-				// Remove display none from title header elements
-				showChildren(titleContainerEl);
-				continue;
-			}
-			
-			if (navbar) {
-				navbar.rerender();
-			} else {
-				// Hide other title header elements
-				hideChildren(titleContainerEl);
-				// Create daily note navbar for this view
-				this.createNavbar(titleContainerEl, fileDate);
 			}
 		}
 	}
 
-	createNavbar(parentEl: HTMLElement, date: moment.Moment) {
-		const id = `${this.nextNavbarId++}`;
-		const navbar = new DailyNoteNavbar(this, id, parentEl, date);
-		this.navbars[navbar.id];
+	createNavbar(parentEl: HTMLElement, date: moment.Moment): DailyNoteNavbar {
+		const navbarId = `${this.nextNavbarId++}`;
+		const navbar = new DailyNoteNavbar(this, navbarId, parentEl, date);
+		this.navbars[navbarId] = navbar;
+		return navbar;
 	}
 
 	removeNavbar(id: string) {
@@ -88,6 +94,12 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 
 	getNavbar(id: string): DailyNoteNavbar | undefined {
 		return this.navbars[id];
+	}
+
+	rerenderNavbars() {
+		for (const navbar of Object.values(this.navbars)) {
+			navbar.rerender();
+		}
 	}
 
 	async openDailyNote(date: moment.Moment, openType: FileOpenType) {
@@ -128,7 +140,6 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 	hasDependencies() {
 		// @ts-ignore
 		const periodicNotes = this.app.plugins.getPlugin("periodic-notes");
-
 		if (!periodicNotes) {
 			new Notice("Daily Note Navbar: Install Periodic Notes");
 			return false;

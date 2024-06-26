@@ -22,14 +22,18 @@ export default class DailyNoteNavbar {
 
 		this.containerEl = createDiv();
 		this.containerEl.addClass("daily-note-navbar");
-		this.containerEl.setAttribute("id", this.id);
+		this.containerEl.setAttribute("daily-note-navbar-id", this.id);
 		this.parentEl = parentEl;
 		this.parentEl.appendChild(this.containerEl);
 
 		this.rerender();
 	}
 
-	rerender() {
+	rerender(date: moment.Moment | null = null) {
+		if (date !== null && date.format("YYYY-MM-DD") !== this.date.format("YYYY-MM-DD")) {
+			this.date = date;
+			this.weekOffset = 0;
+		}
 		this.containerEl.replaceChildren();
 
 		const currentDate = moment();
