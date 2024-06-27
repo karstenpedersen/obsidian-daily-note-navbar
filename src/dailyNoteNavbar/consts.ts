@@ -1,6 +1,13 @@
+import { PaneType } from "obsidian";
 import { FileOpenType } from "../types";
-type FileOpenTypeMapping = Record<Exclude<FileOpenType, "Active">, {icon: string, title: string}>;
 
+export const FILE_OPEN_TYPES_TO_PANE_TYPE: Record<PaneType, FileOpenType> = {
+	"window": "New window",
+	"tab": "New tab",
+	"split": "Split right"
+}
+
+type FileOpenTypeMapping = Record<Exclude<FileOpenType, "Active">, {icon: string, title: string}>;
 export const FILE_OPEN_TYPES_MAPPING: FileOpenTypeMapping = {
 	"New tab": {
 		icon: "file-plus",

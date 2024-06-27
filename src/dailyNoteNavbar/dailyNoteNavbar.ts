@@ -1,8 +1,8 @@
-import { ButtonComponent, MarkdownView, Notice, Menu, moment } from "obsidian";
+import { ButtonComponent, MarkdownView, Notice, Menu, moment, Keymap } from "obsidian";
 import { getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import { getDatesInWeekByDate, getDateFromFileName } from "../utils"; 
 import { FileOpenType } from "../types"; 
-import { FILE_OPEN_TYPES_MAPPING } from "./consts";
+import { FILE_OPEN_TYPES_MAPPING, FILE_OPEN_TYPES_TO_PANE_TYPE } from "./consts";
 import { getDailyNoteFile } from "../utils";
 import DailyNoteNavbarPlugin from "../main";
 
@@ -70,17 +70,20 @@ export default class DailyNoteNavbar {
 				.setClass(stateClass)
 				.setDisabled(isActive)
 				.setButtonText(`${date.format(this.plugin.settings.dateFormat)} ${date.date()}`)
-				.setTooltip(`${date.format(this.plugin.settings.tooltipDateFormat)}`)
-				.onClick(async (event: MouseEvent) => {
-					this.plugin.openDailyNote(date, event.ctrlKey ? "New tab" : this.plugin.settings.defaultOpenType);
-				});
+				.setTooltip(`${date.format(this.plugin.settings.tooltipDateFormat)}`);
 			if (isCurrent) {
 				button.setClass("daily-note-navbar__current");
 			}
 
 			// Add context menu
 			button.buttonEl.onClickEvent((event: MouseEvent) => {
-				if (event.type === "auxclick") {
+				const paneType = Keymap.isModEvent(event);
+				if (paneType && paneType !== true) {
+					const openType = FILE_OPEN_TYPES_TO_PANE_TYPE[paneType];
+					this.plugin.openDailyNote(date, openType);
+				} else if (event.type === "click") {
+					this.plugin.openDailyNote(date, event.ctrlKey ? "New tab" : this.plugin.settings.defaultOpenType);
+				} else if (event.type === "auxclick") {
 					this.createContextMenu(event, date);
 				}
 			});
