@@ -68,7 +68,6 @@ export default class DailyNoteNavbar {
 			const button = new ButtonComponent(this.containerEl)
 				.setClass("daily-note-navbar__date")
 				.setClass(stateClass)
-				.setDisabled(isActive)
 				.setButtonText(`${date.format(this.plugin.settings.dateFormat)} ${date.date()}`)
 				.setTooltip(`${date.format(this.plugin.settings.tooltipDateFormat)}`);
 			if (isCurrent) {
@@ -82,7 +81,13 @@ export default class DailyNoteNavbar {
 					const openType = FILE_OPEN_TYPES_TO_PANE_TYPE[paneType];
 					this.plugin.openDailyNote(date, openType);
 				} else if (event.type === "click") {
-					this.plugin.openDailyNote(date, event.ctrlKey ? "New tab" : this.plugin.settings.defaultOpenType);
+					const openType = event.ctrlKey ? "New tab" : this.plugin.settings.defaultOpenType;
+					// Skip as it is already open
+					const isActive = this.date.format("YYYY-MM-DD") === date.format("YYYY-MM-DD");
+					if (isActive && openType === "Active") {
+						return;
+					}
+					this.plugin.openDailyNote(date, openType);
 				} else if (event.type === "auxclick") {
 					this.createContextMenu(event, date);
 				}

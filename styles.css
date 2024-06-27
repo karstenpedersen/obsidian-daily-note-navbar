@@ -6,7 +6,7 @@
 
 .daily-note-navbar button {
 	padding: 0;
-	background: transparent;
+	background: rgba(0, 0, 0, 0);
 	border: 0;
 	box-shadow: none;
 	padding-inline: 4px;
@@ -14,9 +14,7 @@
 }
 .daily-note-navbar button:hover {
 	background: var(--interactive-hover);
-}
-.daily-note-navbar button:disabled {
-	background: transparent;
+	cursor: pointer;
 }
 
 .daily-note-navbar__date {
@@ -32,8 +30,13 @@
     stroke-width: var(--icon-stroke);
 }
 
-.daily-note-navbar__active {
-	color: var(--color-accent-1);
+button.daily-note-navbar__active {
+	color: var(--text-on-accent);
+	background: var(--interactive-accent);
+}
+
+.daily-note-navbar__current {
+	color: var(--interactive-accent);
 }
 
 .daily-note-navbar__not-exists {
