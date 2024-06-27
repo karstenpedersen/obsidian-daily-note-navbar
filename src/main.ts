@@ -139,9 +139,9 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 			return false;
 		}
 
-		if (dailyNotesPlugin.enabled) {
+		if (dailyNotesPlugin && dailyNotesPlugin.enabled) {
 			return true;
-		} else if (periodicNotes.settings?.daily?.enabled) {
+		} else if (periodicNotes && periodicNotes.settings?.daily?.enabled) {
 			return true;
 		}
 
