@@ -6,7 +6,7 @@
 
 .daily-note-navbar button {
 	padding: 0;
-	background: rgba(0, 0, 0, 0);
+	background: rgba(var(--interactive-hover), 0);
 	border: 0;
 	box-shadow: none;
 	padding-inline: 4px;
@@ -16,11 +16,29 @@
 	background: var(--interactive-hover);
 	cursor: pointer;
 }
+.daily-note-navbar button:hover.daily-note-navbar__active {
+	color: var(--text-on-accent);
+	background: var(--interactive-accent-hover);
+}
 
 .daily-note-navbar__date {
 	min-width: 65px;
 }
+.daily-note-navbar button.daily-note-navbar__active {
+	color: var(--text-on-accent);
+	background: var(--interactive-accent);
+}
+.daily-note-navbar__current {
+	color: var(--interactive-accent);
+}
+.daily-note-navbar__not-exists {
+	color: var(--color-base-50);
+}
+.daily-note-navbar__not-exists:hover {
+	color: inherit;
+}
 
+/* Change week buttons */
 .daily-note-navbar__change-week {
 	aspect-ratio: 1 / 1;
 }
@@ -30,23 +48,7 @@
     stroke-width: var(--icon-stroke);
 }
 
-button.daily-note-navbar__active {
-	color: var(--text-on-accent);
-	background: var(--interactive-accent);
-}
-
-.daily-note-navbar__current {
-	color: var(--interactive-accent);
-}
-
-.daily-note-navbar__not-exists {
-	color: var(--color-base-50);
-}
-.daily-note-navbar__not-exists:hover {
-	color: inherit;
-}
-
+/* Utility class to hide elements */
 .daily-note-navbar__hidden {
 	display: none;
 }
-
