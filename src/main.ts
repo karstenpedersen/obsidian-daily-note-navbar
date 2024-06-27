@@ -130,18 +130,23 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 
 	hasDependencies() {
 		// @ts-ignore
+		const dailyNotesPlugin = this.app.internalPlugins.plugins["daily-notes"];
+		// @ts-ignore
 		const periodicNotes = this.app.plugins.getPlugin("periodic-notes");
-		if (!periodicNotes) {
-			new Notice("Daily Note Navbar: Install Periodic Notes");
+
+		if (!dailyNotesPlugin && !periodicNotes) {
+			new Notice("Daily Note Navbar: Install Periodic Notes or Daily Notes");
 			return false;
 		}
 
-		if (!periodicNotes.settings?.daily?.enabled) {
-			new Notice("Daily Note Navbar: Enable Periodic Notes Daily Notes");
-			return false;
+		if (dailyNotesPlugin.enabled) {
+			return true;
+		} else if (periodicNotes.settings?.daily?.enabled) {
+			return true;
 		}
 
-		return true;
+		new Notice("Daily Note Navbar: Enable Periodic Notes or Daily Notes");
+		return false;
 	}
 
 	async loadSettings() {
