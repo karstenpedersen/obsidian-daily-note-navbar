@@ -1,7 +1,7 @@
 import { Plugin, TFile, Notice, MarkdownView, WorkspaceLeaf } from 'obsidian';
 import { DailyNoteNavbarSettings, DEFAULT_SETTINGS, DailyNoteNavbarSettingTab } from './settings';
 import { FileOpenType } from './types';
-import { getDateFromFileName, getDailyNoteFile, hideChildren, showChildren } from './utils';
+import { getDateFromFileName, getDailyNoteFile, hideChildren, showChildren, selectNavbarFromView } from './utils';
 import DailyNoteNavbar from './dailyNoteNavbar/dailyNoteNavbar';
 
 /**
@@ -19,6 +19,9 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 			this.addDailyNoteNavbar(leaf);
 		}));
 		this.registerEvent(this.app.workspace.on("css-change", () => this.rerenderNavbars()));
+		this.registerEvent(this.app.vault.on("create", () => this.rerenderNavbars()));
+		this.registerEvent(this.app.vault.on("rename", () => this.rerenderNavbars()));
+		this.registerEvent(this.app.vault.on("delete", () => this.rerenderNavbars()));
 	}
 
 	async addDailyNoteNavbar(leaf: WorkspaceLeaf) {
@@ -44,16 +47,9 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 		}
 		const titleContainerEl = viewHeaderTitleContainers[0] as HTMLElement;
 
-		// Check for navbar
-		let navbar: DailyNoteNavbar | undefined;
-		const navbars = view.containerEl.getElementsByClassName("daily-note-navbar");
-		if (navbars.length > 0) {
-			const navbarEl = navbars[0];
-			const navbarId = navbarEl.getAttribute("daily-note-navbar-id");
-			if (navbarId) {
-				navbar = this.getNavbar(navbarId);
-			}
-		}
+		// Get navbar if one is attached to the view
+		const navbarId = selectNavbarFromView(view);
+		const navbar = navbarId ? this.getNavbar(navbarId) : null;
 
 		// Check if file is a daily note file or a normal file
 		const fileDate = getDateFromFileName(activeFile.basename, this.settings.dailyNoteDateFormat);
@@ -67,21 +63,16 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 		
 		if (navbar) {
 			// Reuse navbar for new file
-			navbar.rerender(fileDate);
+			navbar.rerender();
 		} else {
 			hideChildren(titleContainerEl);
-			navbar = this.createNavbar(titleContainerEl, fileDate);
-			view.onunload = () => {
-				if (navbar) {
-					this.removeNavbar(navbar.id);
-				}
-			}
+			this.createNavbar(view, titleContainerEl, fileDate);
 		}
 	}
 
-	createNavbar(parentEl: HTMLElement, date: moment.Moment): DailyNoteNavbar {
+	createNavbar(view: MarkdownView, parentEl: HTMLElement, date: moment.Moment): DailyNoteNavbar {
 		const navbarId = `${this.nextNavbarId++}`;
-		const navbar = new DailyNoteNavbar(this, navbarId, parentEl, date);
+		const navbar = new DailyNoteNavbar(this, navbarId, view, parentEl, date);
 		this.navbars[navbarId] = navbar;
 		return navbar;
 	}

@@ -1,6 +1,6 @@
-import { ButtonComponent, Notice, Menu, moment } from "obsidian";
+import { ButtonComponent, MarkdownView, Notice, Menu, moment } from "obsidian";
 import { getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
-import { getDatesInWeekByDate } from "../utils"; 
+import { getDatesInWeekByDate, getDateFromFileName } from "../utils"; 
 import { FileOpenType } from "../types"; 
 import { FILE_OPEN_TYPES_MAPPING } from "./consts";
 import { getDailyNoteFile } from "../utils";
@@ -13,12 +13,14 @@ export default class DailyNoteNavbar {
 	plugin: DailyNoteNavbarPlugin;
 	containerEl: HTMLElement;
 	parentEl: HTMLElement;
+	view: MarkdownView;
 
-	constructor(plugin: DailyNoteNavbarPlugin, id: string, parentEl: HTMLElement, date: moment.Moment) {
+	constructor(plugin: DailyNoteNavbarPlugin, id: string, view: MarkdownView, parentEl: HTMLElement, date: moment.Moment) {
 		this.id = id;
 		this.date = date;
 		this.weekOffset = 0;
 		this.plugin = plugin;
+		this.view = view;
 
 		this.containerEl = createDiv();
 		this.containerEl.addClass("daily-note-navbar");
@@ -26,12 +28,18 @@ export default class DailyNoteNavbar {
 		this.parentEl = parentEl;
 		this.parentEl.appendChild(this.containerEl);
 
+		// Remove navbar when view unloads
+		this.view.onunload = () => this.plugin.removeNavbar(this.id);
+
 		this.rerender();
 	}
 
-	rerender(date: moment.Moment | null = null) {
-		if (date !== null && date.format("YYYY-MM-DD") !== this.date.format("YYYY-MM-DD")) {
-			this.date = date;
+	rerender() {
+		// Update date from view if it has changed
+		const activeFile = this.view.file;
+		const fileDate = activeFile ? getDateFromFileName(activeFile.basename, this.plugin.settings.dailyNoteDateFormat) : null;
+		if (fileDate && fileDate.format("YYYY-MM-DD") !== this.date.format("YYYY-MM-DD")) {
+			this.date = fileDate;
 			this.weekOffset = 0;
 		}
 		this.containerEl.replaceChildren();

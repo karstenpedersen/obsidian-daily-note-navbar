@@ -1,5 +1,6 @@
 import { View, moment, TFile } from "obsidian";
 import { FirstDayOfWeek } from "./types";
+import DailyNoteNavbar from "./dailyNoteNavbar/dailyNoteNavbar";
 import { createDailyNote, getAllDailyNotes, getDailyNote } from 'obsidian-daily-notes-interface';
 
 /**
@@ -78,4 +79,19 @@ export function toRecord(arr: string[]): Record<string, string> {
  */
 export async function getDailyNoteFile(date: moment.Moment): Promise<TFile> {
 	return getDailyNote(date, getAllDailyNotes()) ?? await createDailyNote(date);
+}
+
+/**
+ * Get navbar id from view if it exists.
+ *
+ * @param {MarkdownView} view - The view to select the navbar from.
+ * @return {string | null} The navbar id or null.
+ */
+export function selectNavbarFromView(view: View): string | null {
+	const navbars = view.containerEl.getElementsByClassName("daily-note-navbar");
+	if (navbars.length > 0) {
+		const navbarEl = navbars[0];
+		return navbarEl.getAttribute("daily-note-navbar-id");
+	}
+	return null;
 }
