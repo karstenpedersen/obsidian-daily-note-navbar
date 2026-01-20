@@ -70,9 +70,9 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 		}
 	}
 
-	createNavbar(view: MarkdownView, parentEl: HTMLElement, date: moment.Moment): DailyNoteNavbar {
+	createNavbar(view: MarkdownView, parentEl: HTMLElement, fileDate: moment.Moment): DailyNoteNavbar {
 		const navbarId = `${this.nextNavbarId++}`;
-		const navbar = new DailyNoteNavbar(this, navbarId, view, parentEl, date);
+		const navbar = new DailyNoteNavbar(this, navbarId, view, parentEl, fileDate);
 		this.navbars[navbarId] = navbar;
 		return navbar;
 	}

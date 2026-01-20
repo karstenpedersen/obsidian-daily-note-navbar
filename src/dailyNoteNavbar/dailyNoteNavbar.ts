@@ -1,4 +1,4 @@
-import { ButtonComponent, MarkdownView, Notice, Menu, moment, Keymap } from "obsidian";
+import { ButtonComponent, MarkdownView, Notice, Menu, moment, Keymap, TFile } from "obsidian";
 import { getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import { getDatesInWeekByDate, getDateFromFileName } from "../utils"; 
 import { FileOpenType } from "../types"; 
@@ -6,18 +6,40 @@ import { FILE_OPEN_TYPES_MAPPING, FILE_OPEN_TYPES_TO_PANE_TYPE } from "./consts"
 import { getDailyNoteFile } from "../utils";
 import DailyNoteNavbarPlugin from "../main";
 
+export async function getNumberOfRemainingTasks(note: TFile): Promise<number> {
+	const { vault } = window.app;
+	const fileContents = await vault.cachedRead(note);
+	return (fileContents.match(/(-|\*) \[ \]/g) || []).length;
+  }
+  
+
+export async function checkRemainingTasksExistance(
+	dailyNote: TFile
+  ): Promise<boolean> {
+	return await getNumberOfRemainingTasks(dailyNote) > 0;
+  }
+  
+
 export default class DailyNoteNavbar {
 	id: string;
+	
 	date: moment.Moment;
+	fileDate: moment.Moment;
+
 	weekOffset = 0;
 	plugin: DailyNoteNavbarPlugin;
 	containerEl: HTMLElement;
+	headerEl: HTMLElement;
+	contentEl: HTMLElement;
 	parentEl: HTMLElement;
 	view: MarkdownView;
 
-	constructor(plugin: DailyNoteNavbarPlugin, id: string, view: MarkdownView, parentEl: HTMLElement, date: moment.Moment) {
+	constructor(plugin: DailyNoteNavbarPlugin, id: string, view: MarkdownView, parentEl: HTMLElement, fileDate: moment.Moment) {
 		this.id = id;
-		this.date = date;
+
+		this.date = fileDate.clone();
+		this.fileDate = fileDate.clone();
+
 		this.weekOffset = 0;
 		this.plugin = plugin;
 		this.view = view;
@@ -25,6 +47,18 @@ export default class DailyNoteNavbar {
 		this.containerEl = createDiv();
 		this.containerEl.addClass("daily-note-navbar");
 		this.containerEl.setAttribute("daily-note-navbar-id", this.id);
+
+		this.headerEl = createDiv();
+		this.headerEl.addClass("daily-note-navbar__header");
+		this.headerEl.addEventListener("click", () => {
+			this.plugin.openDailyNote(moment(), "Active");
+		});
+		this.containerEl.appendChild(this.headerEl);
+		
+		this.contentEl = createDiv();
+		this.contentEl.addClass("daily-note-navbar__content");
+		this.containerEl.appendChild(this.contentEl);
+
 		this.parentEl = parentEl;
 		this.parentEl.appendChild(this.containerEl);
 
@@ -32,6 +66,25 @@ export default class DailyNoteNavbar {
 		this.view.onunload = () => this.plugin.removeNavbar(this.id);
 
 		this.rerender();
+	}
+
+	renderHeader(headerEl: HTMLElement, date: moment.Moment) {
+		headerEl.replaceChildren();
+
+		const monthText = date.format("MMMM");
+		const yearText = date.format("YYYY");
+
+		const month = createSpan();
+		month.innerText = monthText;
+		month.addClass("daily-note-navbar__header__month");
+		headerEl.appendChild(month);
+
+		headerEl.appendChild(createEl("span", { text: "\u00A0" }));
+
+		const year = createSpan();
+		year.innerText = yearText;
+		year.addClass("daily-note-navbar__header__year");
+		headerEl.appendChild(year);
 	}
 
 	rerender() {
@@ -42,13 +95,16 @@ export default class DailyNoteNavbar {
 			this.date = fileDate;
 			this.weekOffset = 0;
 		}
-		this.containerEl.replaceChildren();
+
+		this.contentEl.replaceChildren();
 
 		const currentDate = moment();
 		const dates = getDatesInWeekByDate(this.date.clone().add(this.weekOffset, "week"), this.plugin.settings.firstDayOfWeek);
 
+		this.renderHeader(this.headerEl, dates[3]);
+
 		// Previous week button
-		new ButtonComponent(this.containerEl)
+		new ButtonComponent(this.contentEl)
 			.setClass("daily-note-navbar__change-week")
 			.setIcon("left-arrow")
 			.setTooltip("Previous week")
@@ -62,14 +118,36 @@ export default class DailyNoteNavbar {
 			const dateString = date.format("YYYY-MM-DD");
 			const isActive = this.date.format("YYYY-MM-DD") === dateString;
 			const isCurrent = currentDate.format("YYYY-MM-DD") === dateString;
-			const exists = getDailyNote(date, getAllDailyNotes());
-			const stateClass = isActive ? "daily-note-navbar__active" : exists ? "daily-note-navbar__default" : "daily-note-navbar__not-exists"; 
+			const dailyNoteFile = getDailyNote(date, getAllDailyNotes());
+			const stateClass = isActive
+				? "daily-note-navbar__active"
+				: dailyNoteFile
+					? "daily-note-navbar__default"
+					: "daily-note-navbar__not-exists";
 
-			const button = new ButtonComponent(this.containerEl)
+			const button = new ButtonComponent(this.contentEl)
+				.setButtonText(date.format("DD"))
 				.setClass("daily-note-navbar__date")
 				.setClass(stateClass)
-				.setButtonText(`${date.format(this.plugin.settings.dateFormat)} ${date.date()}`)
 				.setTooltip(`${date.format(this.plugin.settings.tooltipDateFormat)}`);
+
+
+			if (dailyNoteFile) {
+				checkRemainingTasksExistance(dailyNoteFile)
+					.then((remainingTasks) => {
+						if (remainingTasks) {
+							button.setClass("daily-note-navbar__undone");
+						} else {
+							button.setClass("daily-note-navbar__done");
+						}
+					})
+					.catch((error) => {
+						console.error(`obsidian-daily-note-navbar-v2 error for file=[${dateString}]`, error);
+					});
+			} else {
+				button.setClass("daily-note-navbar__not-exists");
+			}
+			
 			if (isCurrent) {
 				button.setClass("daily-note-navbar__current");
 			}
@@ -95,7 +173,7 @@ export default class DailyNoteNavbar {
 		}
 
 		// Next week button
-		new ButtonComponent(this.containerEl)
+		new ButtonComponent(this.contentEl)
 			.setClass("daily-note-navbar__change-week")
 			.setIcon("right-arrow")
 			.setTooltip("Next week")
