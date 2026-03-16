@@ -3,7 +3,7 @@
 	"name": "Daily Note Navbar",
 	"version": "0.2.1",
 	"minAppVersion": "0.15.0",
-	"description": "Navigate between sequential daily notes with ease.",
+	"description": "Navigate between sequential daily notes and weekly notes with ease.",
 	"author": "Karsten F. Pedersen",
 	"authorUrl": "https://github.com/karstenpedersen",
 	"isDesktopOnly": false

@@ -1,7 +1,7 @@
 import { Plugin, TFile, Notice, MarkdownView, WorkspaceLeaf } from 'obsidian';
 import { DailyNoteNavbarSettings, DEFAULT_SETTINGS, DailyNoteNavbarSettingTab } from './settings';
 import { FileOpenType } from './types';
-import { getDateFromFileName, getDailyNoteFile, hideChildren, showChildren, selectNavbarFromView } from './utils';
+import { getDateFromFileName, getDailyNoteFile, getWeeklyNoteFile, hideChildren, showChildren, selectNavbarFromView } from './utils';
 import DailyNoteNavbar from './dailyNoteNavbar/dailyNoteNavbar';
 
 /**
@@ -98,6 +98,21 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 		this.openFile(dailyNote, openType);
 	}
 
+	async openWeeklyNote(date: moment.Moment, openType: FileOpenType) {
+		if (!this.hasWeeklyNotesDependencies()) {
+			new Notice("Weekly Notes are not enabled. Please enable them in Periodic Notes.");
+			return;
+		}
+
+		try {
+			const weeklyNote = await getWeeklyNoteFile(date);
+			this.openFile(weeklyNote, openType);
+		} catch (error) {
+			console.error("Failed to open weekly note:", error);
+			new Notice("Failed to open weekly note. Please check your settings.");
+		}
+	}
+
 	async openFile(file: TFile, openType: FileOpenType) {
 		switch (openType) {
 			case "New window":
@@ -147,6 +162,12 @@ export default class DailyNoteNavbarPlugin extends Plugin {
 
 		new Notice("Daily Note Navbar: Enable Periodic Notes or Daily Notes");
 		return false;
+	}
+
+	hasWeeklyNotesDependencies(): boolean {
+		// @ts-ignore
+		const periodicNotes = this.app.plugins.getPlugin("periodic-notes");
+		return periodicNotes?.settings?.weekly?.enabled ?? false;
 	}
 
 	async loadSettings() {

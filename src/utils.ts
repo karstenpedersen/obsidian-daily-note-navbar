@@ -1,7 +1,14 @@
 import { View, moment, TFile } from "obsidian";
 import { FirstDayOfWeek } from "./types";
 import DailyNoteNavbar from "./dailyNoteNavbar/dailyNoteNavbar";
-import { createDailyNote, getAllDailyNotes, getDailyNote } from 'obsidian-daily-notes-interface';
+import {
+	createDailyNote,
+	getAllDailyNotes,
+	getDailyNote,
+	createWeeklyNote,
+	getAllWeeklyNotes,
+	getWeeklyNote
+} from 'obsidian-daily-notes-interface';
 
 /**
  * Gets the dates in the entire week that the date is in.
@@ -94,4 +101,59 @@ export function selectNavbarFromView(view: View): string | null {
 		return navbarEl.getAttribute("daily-note-navbar-id");
 	}
 	return null;
+}
+
+/**
+ * Gets the date of the Sunday before the current week.
+ *
+ * @param {moment.Moment} date - The current date.
+ * @param {FirstDayOfWeek} firstDayOfWeek - The first day of week setting.
+ * @returns {moment.Moment} Returns the Sunday before the current week.
+ */
+export function getLastSunday(date: moment.Moment, firstDayOfWeek: FirstDayOfWeek): moment.Moment {
+	const weekDates = getDatesInWeekByDate(date, firstDayOfWeek);
+	const firstDayOfWeekDate = weekDates[0];
+
+	// If first day of week is Monday, Sunday is one day before
+	// If first day of week is Sunday, we need the previous week's Sunday
+	if (firstDayOfWeek === "Monday") {
+		return firstDayOfWeekDate.clone().subtract(1, "day");
+	} else {
+		// firstDayOfWeek is Sunday
+		// The first element is Sunday of current week, so we want Sunday of previous week
+		return firstDayOfWeekDate.clone().subtract(7, "days");
+	}
+}
+
+/**
+ * Gets the date of the Monday after the current week.
+ *
+ * @param {moment.Moment} date - The current date.
+ * @param {FirstDayOfWeek} firstDayOfWeek - The first day of week setting.
+ * @returns {moment.Moment} Returns the Monday after the current week.
+ */
+export function getNextMonday(date: moment.Moment, firstDayOfWeek: FirstDayOfWeek): moment.Moment {
+	const weekDates = getDatesInWeekByDate(date, firstDayOfWeek);
+	const lastDayOfWeekDate = weekDates[6]; // Last day of the week
+
+	// If first day of week is Monday, the last day is Sunday, so Monday is one day after
+	// If first day of week is Sunday, the last day is Saturday, so Monday is two days after
+	if (firstDayOfWeek === "Monday") {
+		return lastDayOfWeekDate.clone().add(1, "day");
+	} else {
+		// firstDayOfWeek is Sunday, last day is Saturday
+		return lastDayOfWeekDate.clone().add(2, "days");
+	}
+}
+
+/**
+ * Gets the weekly note file for the given date.
+ *
+ * @note This creates the weekly note if it doesn't already exist.
+ * @param {moment.Moment} date - The date to get file for.
+ * @return {Promise<TFile>} Returns the weekly note file.
+ */
+export async function getWeeklyNoteFile(date: moment.Moment): Promise<TFile> {
+	const allWeeklyNotes = getAllWeeklyNotes();
+	return getWeeklyNote(date, allWeeklyNotes) ?? await createWeeklyNote(date);
 }

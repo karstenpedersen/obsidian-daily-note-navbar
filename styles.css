@@ -31,11 +31,22 @@
 .daily-note-navbar__current {
 	color: var(--interactive-accent);
 }
+
+/* Extra buttons (last Sunday / next Monday) */
+.daily-note-navbar__extra {
+	opacity: 0.75;
+}
+.daily-note-navbar__extra:hover {
+	opacity: 1;
+}
+
 .daily-note-navbar__not-exists {
 	color: var(--color-base-50) !important;
+	opacity: 0.2;
 }
 .daily-note-navbar__not-exists:hover {
 	color: inherit;
+	opacity: 0.5;
 }
 
 /* Change week buttons */
